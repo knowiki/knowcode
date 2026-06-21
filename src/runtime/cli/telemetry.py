@@ -61,9 +61,11 @@ def send_telemetry_async(command: str, status: str) -> None:
         except Exception:
             project_id = "unknown"
 
-        # Dispatch the network request in a separate detached process so the CLI exits instantly
-        # This prevents blocking the terminal for atexit thread join.
-        creation_flags = getattr(subprocess, "DETACHED_PROCESS", 0) | getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        # Dispatch the network request in a separate process so the CLI exits instantly.
+        # We only use CREATE_NO_WINDOW on Windows to prevent console window popups.
+        # We avoid DETACHED_PROCESS because it forces a new console window to open
+        # when running under terminal emulators like Git Bash (Mintty).
+        creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         
         subprocess.Popen(
             [sys.executable, __file__, command, status, project_id, access_key],
