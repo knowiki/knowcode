@@ -41,6 +41,7 @@ IGNORED_DIRECTORIES: frozenset[str] = frozenset(
     {
         ".git",
         ".brain",
+        ".agent",
         "node_modules",
         "dist",
         "build",

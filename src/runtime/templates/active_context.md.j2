@@ -1,0 +1,12 @@
+# Active Session Context
+
+**Purpose:** This is the AI's short-term memory buffer. It is used to temporarily track the *Why* (the intent behind code changes) during an active development session.
+
+## Rules for the AI Agent:
+1. **Append-Only:** Continuously append 1-2 sentence summaries of the user's intent and design decisions as they occur.
+2. **Never store code:** Do not log raw code snippets here. The code is already in the repository. Log *why* the code was written.
+3. **No formatting overhead:** Keep the summaries brief. Bullet points are fine.
+4. **Hands-off Syncing:** When `brain sync` runs, the CLI will automatically roll this file over into `previous_context.md`. Do not manually flush or truncate this file.
+
+---
+*(Append active context below this line)*

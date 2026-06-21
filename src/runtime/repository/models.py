@@ -35,47 +35,67 @@ class Repository(BaseModel):
     brain_dir: Path
     """Absolute path to the .brain directory (may or may not exist yet)."""
 
+    agent_dir: Path
+    """Absolute path to the .agent directory (may or may not exist yet)."""
+
 
 class RepositoryPaths(BaseModel):
-    """The canonical 9-field path contract.
+    """The canonical 12-field path contract.
 
     This is the single most important object in the ecosystem.
     The entire Runtime and Structural Engine communicate using this object.
 
     The Structural Engine accepts the full object and simply ignores the
-    fields it does not need.  No intermediate translation or mapping layer
+    fields it does not need. No intermediate translation or mapping layer
     exists.
-
-    Fields
-    ------
-    repo_root : Path
-        Repository root directory.
-    brain_root : Path
-        ``.brain/`` directory.
-    structure_dir : Path
-        ``.brain/structure/`` — parent of snapshots.
-    snapshots_dir : Path
-        ``.brain/structure/snapshots/`` — snapshot JSON files.
-    reports_dir : Path
-        ``.brain/reports/`` — structural evolution reports.
-    logs_dir : Path
-        ``.brain/logs/`` — synchronization history.
-    knowledge_dir : Path
-        ``.brain/knowledge/`` — semantic knowledge (human/AI owned).
-    state_file : Path
-        ``.brain/state.yaml`` — the definitive synchronization authority.
-    brain_file : Path
-        ``.brain/BRAIN.md`` — the human-facing orientation document.
     """
 
     model_config = ConfigDict(frozen=True)
 
     repo_root: Path
+    """Repository root directory."""
+    
     brain_root: Path
+    """``.brain/`` directory."""
+    
+    agent_root: Path
+    """``.agent/`` directory."""
+    
     structure_dir: Path
+    """``.brain/structure/`` - parent of snapshots."""
+    
     snapshots_dir: Path
+    """``.brain/structure/snapshots/`` - snapshot JSON files."""
+    
     reports_dir: Path
+    """``.brain/reports/`` - structural evolution reports."""
+    
     logs_dir: Path
+    """``.brain/logs/`` - synchronization history."""
+    
     knowledge_dir: Path
+    """``.brain/knowledge/`` - semantic knowledge (human/AI owned)."""
+    
     state_file: Path
+    """``.brain/state.yaml`` - the definitive synchronization authority."""
+    
     brain_file: Path
+    """``.agent/BRAIN.md`` - the master governance and human-facing orientation document."""
+    
+    skills_dir: Path
+    """``.agent/skills/`` - agent capabilities."""
+    
+    workflows_dir: Path
+    """``.agent/workflows/`` - agent orchestrations."""
+    
+    memory_dir: Path
+    """``.agent/memory/`` - agent's short-term scratchpad."""
+    
+    active_context_file: Path
+    """``.agent/memory/active_context.md`` - the active session intent log."""
+    
+    previous_context_file: Path
+    """``.agent/memory/previous_context.md`` - the rolled-over intent log waiting for synthesis."""
+    
+    system_skills_dir: Path
+    """``.agent/skills/system/`` - prime directives and system-level skills."""

@@ -50,6 +50,7 @@ def discover_repository(start: Path | None = None) -> Repository:
                 root=current,
                 git_dir=git_dir,
                 brain_dir=current / ".brain",
+                agent_dir=current / ".agent",
             )
 
         parent = current.parent

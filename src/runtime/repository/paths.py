@@ -26,16 +26,24 @@ def build_paths(repo: Repository) -> RepositoryPaths:
         The 9-field path contract consumed by the entire ecosystem.
     """
     brain = repo.brain_dir
+    agent = repo.agent_dir
     structure = brain / "structure"
 
     return RepositoryPaths(
         repo_root=repo.root,
         brain_root=brain,
+        agent_root=agent,
         structure_dir=structure,
         snapshots_dir=structure / "snapshots",
         reports_dir=brain / "reports",
         logs_dir=brain / "logs",
         knowledge_dir=brain / "knowledge",
         state_file=brain / "state.yaml",
-        brain_file=brain / "BRAIN.md",
+        brain_file=agent / "BRAIN.md",
+        skills_dir=agent / "skills",
+        workflows_dir=agent / "workflows",
+        memory_dir=agent / "memory",
+        active_context_file=agent / "memory" / "active_context.md",
+        previous_context_file=agent / "memory" / "previous_context.md",
+        system_skills_dir=agent / "skills" / "system",
     )

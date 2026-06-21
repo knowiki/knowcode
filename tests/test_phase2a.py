@@ -159,15 +159,15 @@ def test_parse_stub():
         (td / "src").mkdir()
         (td / "src" / "main.py").write_text("def main(): pass", encoding="utf-8")
 
-        repo = Repository(root=td.resolve(), git_dir=(td / ".git").resolve(), brain_dir=(td / ".brain").resolve())
+        repo = Repository(root=td.resolve(), git_dir=(td / ".git").resolve(), brain_dir=(td / ".brain").resolve(), agent_dir=(td / ".agent").resolve())
         paths = build_paths(repo)
 
         snapshot = parse(paths)
 
         assert isinstance(snapshot, StructuralSnapshot)
-        # Phase 2A stub returns empty snapshot
-        assert len(snapshot.entities) == 0
-        assert len(snapshot.relationships) == 0
+        # Phase 2A stub has been implemented; it parses main.py and finds the file and the main function.
+        assert len(snapshot.entities) == 2
+        assert len(snapshot.relationships) == 1
 
         print("[OK] parse() returns empty StructuralSnapshot (Phase 2A stub)")
 

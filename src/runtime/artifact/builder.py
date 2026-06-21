@@ -70,6 +70,11 @@ class ArtifactBuilder:
             self.paths.knowledge_dir / "constraints",
             self.paths.knowledge_dir / "conventions",
             self.paths.knowledge_dir / "components",
+            self.paths.agent_root,
+            self.paths.skills_dir,
+            self.paths.workflows_dir,
+            self.paths.memory_dir,
+            self.paths.system_skills_dir,
         ]
 
         for directory in dirs_to_create:
@@ -94,3 +99,43 @@ class ArtifactBuilder:
         km_file = self.paths.knowledge_dir / "knowledge-maintenance.md"
         km_file.write_text(km_content, encoding="utf-8")
         logger.debug("artifact_builder.render", file=str(km_file))
+
+        # 3. Render example-skill.md
+        skill_template = self.jinja_env.get_template("example-skill.md.j2")
+        skill_content = skill_template.render()
+        skill_file = self.paths.skills_dir / "example-skill.md"
+        skill_file.write_text(skill_content, encoding="utf-8")
+        logger.debug("artifact_builder.render", file=str(skill_file))
+
+        # 4. Render example-workflow.md
+        workflow_template = self.jinja_env.get_template("example-workflow.md.j2")
+        workflow_content = workflow_template.render()
+        workflow_file = self.paths.workflows_dir / "example-workflow.md"
+        workflow_file.write_text(workflow_content, encoding="utf-8")
+        logger.debug("artifact_builder.render", file=str(workflow_file))
+
+        # 5. Render placeholder README.md files for knowledge subdirectories
+        knowledge_subdirs = {
+            "architecture": "Architecture",
+            "decisions": "Decisions",
+            "constraints": "Constraints",
+            "conventions": "Conventions",
+            "components": "Components",
+        }
+        for dirname, title in knowledge_subdirs.items():
+            readme_path = self.paths.knowledge_dir / dirname / f"{dirname}.md"
+            readme_path.write_text(f"# {title}\n\n", encoding="utf-8")
+            logger.debug("artifact_builder.render", file=str(readme_path))
+
+        # 6. Render active_context.md
+        ac_template = self.jinja_env.get_template("active_context.md.j2")
+        ac_content = ac_template.render()
+        self.paths.active_context_file.write_text(ac_content, encoding="utf-8")
+        logger.debug("artifact_builder.render", file=str(self.paths.active_context_file))
+
+        # 7. Render context_tracker.md
+        ct_template = self.jinja_env.get_template("context_tracker.md.j2")
+        ct_content = ct_template.render()
+        ct_file = self.paths.system_skills_dir / "context_tracker.md"
+        ct_file.write_text(ct_content, encoding="utf-8")
+        logger.debug("artifact_builder.render", file=str(ct_file))

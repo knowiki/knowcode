@@ -37,4 +37,21 @@ def run_sync(cwd: Path) -> SyncResult:
     validate_for_sync(paths)
     
     engine = StructuralEngine()
-    return engine.sync(paths)
+    result = engine.sync(paths)
+    
+    # Rollover the active context memory if structural changes occurred
+    if result.changes_detected and paths.active_context_file.exists():
+        active_content = paths.active_context_file.read_text(encoding="utf-8")
+        
+        if paths.previous_context_file.exists():
+            with open(paths.previous_context_file, "a", encoding="utf-8") as f:
+                f.write("\n\n---\n\n" + active_content)
+        else:
+            paths.previous_context_file.write_text(active_content, encoding="utf-8")
+            
+        import jinja2
+        env = jinja2.Environment(loader=jinja2.PackageLoader("runtime", "templates"))
+        template = env.get_template("active_context.md.j2")
+        paths.active_context_file.write_text(template.render(), encoding="utf-8")
+        
+    return result

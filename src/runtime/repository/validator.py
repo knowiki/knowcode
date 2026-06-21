@@ -50,6 +50,11 @@ def validate_for_init(paths: RepositoryPaths) -> None:
         raise BrainAlreadyInitialized(
             f"Brain artifact already exists: {paths.brain_root}"
         )
+        
+    if paths.agent_root.is_dir():
+        raise BrainAlreadyInitialized(
+            f"Agent artifact already exists: {paths.agent_root}"
+        )
 
 
 def validate_for_sync(paths: RepositoryPaths) -> None:
@@ -78,6 +83,11 @@ def validate_for_sync(paths: RepositoryPaths) -> None:
     if not paths.brain_root.is_dir():
         raise BrainNotInitialized(
             f"Brain artifact not found. Run 'brain .' first: {paths.repo_root}"
+        )
+        
+    if not paths.agent_root.is_dir():
+        raise BrainNotInitialized(
+            f"Agent artifact not found. Run 'brain .' first: {paths.repo_root}"
         )
 
     if not paths.state_file.is_file():

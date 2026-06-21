@@ -24,7 +24,7 @@ def test_phase5():
         brain_dir = td / ".brain"
         brain_dir.mkdir()
         
-        repo = Repository(root=td.resolve(), git_dir=git_dir.resolve(), brain_dir=brain_dir.resolve())
+        repo = Repository(root=td.resolve(), git_dir=git_dir.resolve(), brain_dir=brain_dir.resolve(), agent_dir=(td / ".agent").resolve())
         paths = build_paths(repo)
         
         # Ensure directories exist

@@ -126,3 +126,44 @@ class StateManager:
             file=str(paths.state_file),
             revision=revision_id,
         )
+
+    def increment_semantic_revision(self, paths: RepositoryPaths) -> str:
+        """Safely increment the semantic_revision field.
+        
+        Parameters
+        ----------
+        paths : RepositoryPaths
+            The canonical path contract.
+            
+        Returns
+        -------
+        str
+            The new semantic revision ID.
+        """
+        with open(paths.state_file, "r", encoding="utf-8") as f:
+            data = self.yaml.load(f)
+            
+        current = data.get("semantic_revision", "none")
+        if current == "none":
+            new_rev = "M-001"
+        else:
+            try:
+                # e.g. "M-016" -> "M-017"
+                prefix, num_str = current.split("-")
+                new_num = int(num_str) + 1
+                new_rev = f"{prefix}-{new_num:03d}"
+            except ValueError:
+                # Fallback if corrupted
+                new_rev = "M-001"
+                
+        data["semantic_revision"] = new_rev
+        
+        with open(paths.state_file, "w", encoding="utf-8") as f:
+            self.yaml.dump(data, f)
+            
+        logger.info(
+            "state_manager.semantic_bumped",
+            file=str(paths.state_file),
+            semantic_revision=new_rev,
+        )
+        return new_rev

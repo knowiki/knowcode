@@ -15,7 +15,7 @@ def test_phase3():
         git_dir = td / ".git"
         git_dir.mkdir()
         
-        repo = Repository(root=td.resolve(), git_dir=git_dir.resolve(), brain_dir=(td / ".brain").resolve())
+        repo = Repository(root=td.resolve(), git_dir=git_dir.resolve(), brain_dir=(td / ".brain").resolve(), agent_dir=(td / ".agent").resolve())
         paths = build_paths(repo)
         
         # Run builder
