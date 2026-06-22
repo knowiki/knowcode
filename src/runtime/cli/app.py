@@ -99,7 +99,8 @@ def init_command() -> None:
         panel = Panel.fit(
             f"[bold green]{result.message}[/bold green]\n"
             f"Structural Revision: [cyan]{result.structural_revision}[/cyan]\n"
-            f"Initial Snapshot: [cyan]{result.snapshot_file}[/cyan]",
+            f"Initial Snapshot: [cyan]{result.snapshot_file}[/cyan]\n\n"
+            f"[bold yellow]Next Step:[/bold yellow] Type [magenta]/knowcode[/magenta] in your AI chat to activate governance.",
             title="KnowCode Initialization",
             border_style="green",
         )
