@@ -31,17 +31,17 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            pkg_name: knowcode-win32-x64
+            pkg_name: "@knowiki/knowcode-win32-x64"
             npm_os: win32
             npm_cpu: x64
             artifact_name: know.exe
           - os: macos-latest
-            pkg_name: knowcode-darwin-arm64
+            pkg_name: "@knowiki/knowcode-darwin-arm64"
             npm_os: darwin
             npm_cpu: arm64
             artifact_name: know
           - os: ubuntu-latest
-            pkg_name: knowcode-linux-x64
+            pkg_name: "@knowiki/knowcode-linux-x64"
             npm_os: linux
             npm_cpu: x64
             artifact_name: know
