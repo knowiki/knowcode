@@ -1,0 +1,23 @@
+{
+  "name": "knowcode",
+  "version": "0.1.0",
+  "description": "KnowCode : the knowledge layer to your code",
+  "bin": {
+    "know": "bin/know.js"
+  },
+  "files": [
+    "bin/know.js"
+  ],
+  "os": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
+  "author": "KnowCode Team",
+  "license": "MIT",
+  "optionalDependencies": {
+    "knowcode-win32-x64": "0.1.0",
+    "knowcode-darwin-arm64": "0.1.0",
+    "knowcode-linux-x64": "0.1.0"
+  }
+}
