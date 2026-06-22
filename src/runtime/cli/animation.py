@@ -1,4 +1,4 @@
-"""Logo animation module for Knowcode CLI."""
+"""Logo animation module for KnowCode CLI."""
 
 from __future__ import annotations
 
@@ -24,21 +24,26 @@ WHITE = "\033[97m"
 GRAY = "\033[90m"
 
 LOGO_LINES = [
-    "███████████████████████████████",
-    "██                           ██",
-    "██    ███████████████████    ██",
-    "██    ███████▀   ▀███████    ██",
-    "██    ███████▄   ▄███████    ██",
-    "██    █████████ █████████    ██",
-    "██    █████████ █████████    ██",
-    "██    █████████ █████████    ██",
-    "██                           ██",
-    "███████████████████████████████",
+    "███████████████████████████",
+    "██                       ██",
+    "██    ███████████████    ██",
+    "██    █████▀   ▀█████    ██",
+    "██    █████▄   ▄█████    ██",
+    "██    ███████ ███████    ██",
+    "██    █████▀   ▀█████    ██",
+    "██    █████▄   ▄█████    ██",
+    "██    ███████████████    ██",
+    "██                       ██",
+    "███████████████████████████",
 ]
 
-LXN = len(LOGO_LINES[0]) - 1
-LYN = len(LOGO_LINES) - 1
-TAGLINE = "Knowcode"
+LOGO_HEIGHT = len(LOGO_LINES)
+LOGO_WIDTH = len(LOGO_LINES[0])
+LEFT_BLOCK_WIDTH = LOGO_WIDTH + 6
+
+LXN = LOGO_WIDTH - 1
+LYN = LOGO_HEIGHT - 1
+TAGLINE = "KnowCode"
 VERSION = "v0.1.0"
 
 
@@ -52,12 +57,12 @@ def write(s: str) -> None:
     sys.stdout.flush()
 
 
-ANSI_ESCAPE = re.compile(r'\x1b\[[0-9;]*[a-zA-Z]')
+ANSI_ESCAPE = re.compile(r"\x1b\[[0-9;]*[a-zA-Z]")
 
 
 def visible_len(s: str) -> int:
     """Calculate the printed length of a string, excluding ANSI escape sequences."""
-    return len(ANSI_ESCAPE.sub('', s))
+    return len(ANSI_ESCAPE.sub("", s))
 
 
 def pad_left(s: str, width: int) -> str:
@@ -69,8 +74,8 @@ def pad_left(s: str, width: int) -> str:
 
 
 class BackgroundAnimator:
-    """Animate the Knowcode logo in the background while tasks execute."""
-    
+    """Animate the KnowCode logo in the background while tasks execute."""
+
     def __init__(self):
         self.status = "Starting..."
         self.running = False
@@ -85,50 +90,52 @@ class BackgroundAnimator:
         """Start the animation in a background thread if running in an interactive terminal."""
         if not self.is_tty:
             return
-            
+
         write(HIDE_CURSOR)
-        
+
         cols, lines = shutil.get_terminal_size()
-        
+
         # Reserve screen lines initially depending on terminal size
-        if lines < 11 or cols < 74:
+        if lines < LOGO_HEIGHT + 2 or cols < 74:
             self.last_height = 0
         else:
-            write("\n" * 9)
-            self.last_height = 9
-            
+            write("\n" * (LOGO_HEIGHT + 1))
+            self.last_height = LOGO_HEIGHT + 1
+
         self.running = True
         self._thread = threading.Thread(target=self._run, daemon=True)
         self._thread.start()
 
-    def stop(self, final_status: str = "Ready", results: list[str] | None = None) -> None:
+    def stop(
+        self, final_status: str = "Ready", results: list[str] | None = None
+    ) -> None:
         """Stop the animation and print the final static state."""
         if not self.is_tty:
             if results:
                 for r_line in results:
                     write(f"{r_line}\n")
             return
-            
+
         if self.running:
             self.status = final_status
-            
+
             # Enforce a minimum animation duration (up to phase 40, approx 1.4s)
             # so that the circular reveal animation has time to be visible
             while self.phase < 40:
                 time.sleep(0.05)
-                
+
             self.running = False
             if self._thread:
                 self._thread.join()
-            
+
             # Reposition to the top of our last frame before printing final state
             if self.last_height and self.last_height > 0:
                 move_up(self.last_height)
                 write("\033[J")
-            
+
             # Print final clean state
             self._print_final(results)
-            
+
         write(SHOW_CURSOR)
 
     def _get_colored_char(self, char: str, x: int, y: int, R: float) -> str:
@@ -163,14 +170,14 @@ class BackgroundAnimator:
 
         while self.running:
             cols, lines = shutil.get_terminal_size()
-            
+
             # Determine display mode based on terminal size
-            if lines < 11 or cols < 74:
+            if lines < LOGO_HEIGHT + 2 or cols < 74:
                 mode = "single"
                 current_height = 0
             else:
                 mode = "full"
-                current_height = 9
+                current_height = LOGO_HEIGHT + 1
 
             # Move cursor back to the top of the previous frame
             if self.last_height and self.last_height > 0:
@@ -182,7 +189,7 @@ class BackgroundAnimator:
                 max_width = max(10, cols - 6)
                 status_text = self.status
                 if len(status_text) > max_width:
-                    status_text = status_text[:max_width - 3] + "..."
+                    status_text = status_text[: max_width - 3] + "..."
                 write(f"\r  ● {status_text:<{max_width}}")
             else:
                 s = self.phase % cycle
@@ -192,30 +199,34 @@ class BackgroundAnimator:
                 for y, line in enumerate(LOGO_LINES):
                     animated_line_chars = []
                     for x, char in enumerate(line):
-                        animated_line_chars.append(self._get_colored_char(char, x, y, R))
+                        animated_line_chars.append(
+                            self._get_colored_char(char, x, y, R)
+                        )
                     left_lines.append(f"  {''.join(animated_line_chars)}")
 
                 # Tagline and active status side-by-side components on the right
-                right_width = cols - 29 - 4
+                right_width = cols - LEFT_BLOCK_WIDTH - 4
                 status_max = max(15, right_width - 2)
                 status_text = self.status
                 if len(status_text) > status_max:
-                    status_text = status_text[:status_max - 3] + "..."
-                
+                    status_text = status_text[: status_max - 3] + "..."
+
                 separator_len = min(31, right_width)
                 right_lines = [
                     f"{GRAY}{TAGLINE}    {DIM}{GRAY}{VERSION}{RESET}",
                     f"{GRAY}{'─' * separator_len}{RESET}",
                     "",
-                    f"{WHITE}● {status_text:<{status_max}}{RESET}"
+                    f"{WHITE}● {status_text:<{status_max}}{RESET}",
                 ]
 
-                buffer = []
+                buffer = ["\n"]
                 max_len = max(len(left_lines), len(right_lines))
                 for i in range(max_len):
-                    left = left_lines[i] if i < len(left_lines) else " " * 29
+                    left = (
+                        left_lines[i] if i < len(left_lines) else " " * LEFT_BLOCK_WIDTH
+                    )
                     right = right_lines[i] if i < len(right_lines) else ""
-                    buffer.append(f"{pad_left(left, 29)}{right}\n")
+                    buffer.append(f"{pad_left(left, LEFT_BLOCK_WIDTH)}{right}\n")
 
                 write("".join(buffer))
 
@@ -225,12 +236,12 @@ class BackgroundAnimator:
 
     def _print_final(self, results: list[str] | None = None) -> None:
         cols, lines = shutil.get_terminal_size()
-        
-        if lines < 14 or cols < 80:
+
+        if lines < LOGO_HEIGHT + 4 or cols < 80:
             max_width = max(10, cols - 6)
             status_text = self.status
             if len(status_text) > max_width:
-                status_text = status_text[:max_width - 3] + "..."
+                status_text = status_text[: max_width - 3] + "..."
             write(f"\r  {WHITE}✔ {status_text:<{max_width}}{RESET}\n")
             if results:
                 for r_line in results:
@@ -239,29 +250,29 @@ class BackgroundAnimator:
             left_lines = []
             for line in LOGO_LINES:
                 left_lines.append(f"  {BOLD}{WHITE}{line}{RESET}")
-                
-            right_width = cols - 29 - 4
+
+            right_width = cols - LEFT_BLOCK_WIDTH - 4
             status_max = max(15, right_width - 2)
             status_text = self.status
             if len(status_text) > status_max:
-                status_text = status_text[:status_max - 3] + "..."
-                
+                status_text = status_text[: status_max - 3] + "..."
+
             separator_len = min(31, right_width)
             right_lines = [
                 f"{GRAY}{TAGLINE}    {DIM}{GRAY}{VERSION}{RESET}",
                 f"{GRAY}{'─' * separator_len}{RESET}",
                 "",
                 f"{WHITE}✔ {status_text:<{status_max}}{RESET}",
-                ""
+                "",
             ]
             if results:
                 right_lines.extend(results)
-                
-            buffer = []
+
+            buffer = ["\n"]
             max_len = max(len(left_lines), len(right_lines))
             for i in range(max_len):
-                left = left_lines[i] if i < len(left_lines) else " " * 29
+                left = left_lines[i] if i < len(left_lines) else " " * LEFT_BLOCK_WIDTH
                 right = right_lines[i] if i < len(right_lines) else ""
-                buffer.append(f"{pad_left(left, 29)}{right}\n")
-                
+                buffer.append(f"{pad_left(left, LEFT_BLOCK_WIDTH)}{right}\n")
+
             write("".join(buffer))

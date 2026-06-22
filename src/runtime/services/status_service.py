@@ -1,6 +1,6 @@
 """Status service.
 
-Handles the Runtime orchestration for the 'brain status' command.
+Handles the Runtime orchestration for the 'know status' command.
 """
 
 from __future__ import annotations

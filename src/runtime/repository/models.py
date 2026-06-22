@@ -5,7 +5,7 @@ between the Runtime and the Structural Engine:
 
 - Repository: lightweight identity object for a discovered git repository.
 - RepositoryPaths: the canonical 9-field path contract passed to every
-  subsystem. No component should hardcode paths like ".brain/structure".
+  subsystem. No component should hardcode paths like ".knowcode/structure".
   Everything comes from RepositoryPaths.
 """
 
@@ -55,7 +55,7 @@ class RepositoryPaths(BaseModel):
     """``.git/`` directory."""
     
     knowcode_root: Path
-    """``.knowcode/`` - The top-level Brain Artifact directory."""
+    """``.knowcode/`` - The top-level KnowCode Artifact directory."""
     
     knowcode_file: Path
     """``.knowcode/KNOWCODE.md`` - The human-readable entrypoint document."""

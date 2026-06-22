@@ -16,10 +16,11 @@ dependencies = [
     "tree-sitter-javascript>=0.25.0",
     "tree-sitter-typescript>=0.23.2",
     "platformdirs>=4.0.0",
+    "questionary>=2.0.0",
 ]
 
 [project.scripts]
-knowcode = "runtime.cli.app:app"
+know = "runtime.cli.app:app"
 
 [build-system]
 requires = ["hatchling"]

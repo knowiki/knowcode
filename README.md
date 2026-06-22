@@ -1,9 +1,9 @@
-# Knowcode
+# KnowCode
 
 [![Python Version](https://img.shields.io/badge/python-3.13%2B-blue.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](#license)
 
-**Knowcode** is a structural cognition engine for code repositories. It bridges the gap between **physical repository code**, **deterministic structural snapshots**, and **semantic architectural knowledge**, allowing AI agents and human developers to inspect, track, and maintain codebase structures deterministically.
+**KnowCode** is a structural cognition engine for code repositories. It bridges the gap between **physical repository code**, **deterministic structural snapshots**, and **semantic architectural knowledge**, allowing AI agents and human developers to inspect, track, and maintain codebase structures deterministically.
 
 ---
 
@@ -12,7 +12,7 @@
 - [Overview](#-overview)
 - [Key Features](#-key-features)
 - [Architecture & Authority Hierarchy](#-architecture--authority-hierarchy)
-- [Ecosystem Layout (`.brain`)](#-ecosystem-layout-brain)
+- [Ecosystem Layout (`.knowcode`)](#-ecosystem-layout-brain)
 - [Installation](#-installation)
 - [Usage & CLI Reference](#-usage--cli-reference)
 - [License](#-license)
@@ -21,15 +21,15 @@
 
 ## 🔍 Overview
 
-Knowcode partitions codebase understanding into three clean domains:
+KnowCode partitions codebase understanding into three clean domains:
 1. **Physical Reality:** The actual source files inside the repository.
 2. **Structural Truth:** Deterministic representation of files, components, and code symbols parsed via abstract syntax trees (ASTs).
 3. **Semantic Knowledge:** Human-authored or AI-generated documentation, rules, and architectural guidelines that provide meaning and context.
 
-By analyzing the structure, Knowcode computes a deterministic state and exposes it to orchestrators through a unified CLI. 
+By analyzing the structure, KnowCode computes a deterministic state and exposes it to orchestrators through a unified CLI. 
 
 **Retroactive Context Distillation:**
-Knowcode completely flips the traditional documentation model. Instead of forcing developers to write specs *before* they code, Knowcode uses an AI agent to track your intent during a development session. When you sync your physical code changes, the AI agent is automatically invoked to synthesize your intent against the deterministic reality of the codebase, ensuring your architectural knowledge naturally accumulates as a byproduct of development.
+KnowCode completely flips the traditional documentation model. Instead of forcing developers to write specs *before* they code, KnowCode uses an AI agent to track your intent during a development session. When you sync your physical code changes, the AI agent is automatically invoked to synthesize your intent against the deterministic reality of the codebase, ensuring your architectural knowledge naturally accumulates as a byproduct of development.
 
 ---
 
@@ -44,11 +44,11 @@ Knowcode completely flips the traditional documentation model. Instead of forcin
 
 ## 🏛️ Architecture & Authority Hierarchy
 
-Knowcode operates under a strict, cascading chain of truth. No system layer is permitted to bypass the layers above it:
+KnowCode operates under a strict, cascading chain of truth. No system layer is permitted to bypass the layers above it:
 
 ```mermaid
 graph TD
-    A[1. Repository - Physical Reality] --> B[2. Knowcode Artifact - .knowcode/ directory]
+    A[1. Repository - Physical Reality] --> B[2. KnowCode Artifact - .knowcode/ directory]
     B --> C[3. state.yaml - Definitive Sync Authority]
     C --> D[4. StateManager - Steward of state.yaml]
     D --> E[5. Structural Engine - Deterministic Calculator]
@@ -56,7 +56,7 @@ graph TD
 ```
 
 1. **Repository:** The ultimate physical source of truth.
-2. **Knowcode Artifact:** The reflection of that reality (`.knowcode/` directory).
+2. **KnowCode Artifact:** The reflection of that reality (`.knowcode/` directory).
 3. **`state.yaml`:** The definitive metadata and synchronization authority.
 4. **`StateManager`:** The steward managing structural fields inside `state.yaml`.
 5. **Structural Engine:** The deterministic calculator of ASTs and changes.
@@ -64,9 +64,9 @@ graph TD
 
 ---
 
-## 📂 Ecosystem Layout (`.brain` & `.agent`)
+## 📂 Ecosystem Layout (`.knowcode` & `.agent`)
 
-When Knowcode is initialized in a repository, it generates a dual-folder structure:
+When KnowCode is initialized in a repository, it generates a dual-folder structure:
 
 ```text
 .knowcode/                        # The Deterministic Knowledge Artifact
@@ -115,7 +115,7 @@ cd knowcode
 # Synchronize dependencies and virtual environment
 uv sync
 
-# Install Knowcode globally/locally in editable mode
+# Install KnowCode globally/locally in editable mode
 uv pip install -e .
 ```
 
@@ -123,26 +123,26 @@ uv pip install -e .
 
 ## 🛠️ Usage & CLI Reference
 
-All interactions are done through the `brain` command-line utility.
+All interactions are done through the `know` command-line utility.
 
 ### 1. Initialize the Brain
 To scaffold the `.knowcode/` directory and create the initial baseline snapshot (`S-001`) of your repository:
 
 ```bash
-knowcode .
+know .
 ```
 
 ### 2. View Current Status
-To view the status of the Knowcode instance, including the current structural/semantic revision, snapshot reference, and synchronization metadata:
+To view the status of the know instance, including the current structural/semantic revision, snapshot reference, and synchronization metadata:
 
 ```bash
-knowcode status
+know status
 ```
 
 *Example Output:*
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│                 Knowcode Status: /path/to/repo                 │
+│                 KnowCode Status: /path/to/repo                 │
 ├──────────────────────┬──────────────────────────────────────┤
 │ Initialized          │ Yes                                  │
 │ Structural Revision  │ S-001                                │
@@ -154,19 +154,19 @@ knowcode status
 ```
 
 ### 3. Synchronize Structural State
-Scan the repository for structural changes. If modifications are detected, Knowcode writes a new snapshot (`S-002`, `S-003`, etc.), documents the structural differences in a report, and automatically rolls over the `active_context.md` memory buffer:
+Scan the repository for structural changes. If modifications are detected, KnowCode writes a new snapshot (`S-002`, `S-003`, etc.), documents the structural differences in a report, and automatically rolls over the `active_context.md` memory buffer:
 
 ```bash
-knowcode sync
+know sync
 ```
 
-* If there are no structural changes, Knowcode returns immediately with a `No structural changes detected` shortcut and does not write a new snapshot.
+* If there are no structural changes, KnowCode returns immediately with a `No structural changes detected` shortcut and does not write a new snapshot.
 
 ### 4. Synchronize Semantic Knowledge
 After a structural sync, the Semantic Agent synthesizes the rolled-over `previous_context.md` with the structural report. Once the Agent commits the architectural updates to `.knowcode/knowledge/`, run this command to safely bump the semantic revision (`M-001`) and flush the memory buffer:
 
 ```bash
-knowcode sync-semantic
+know sync-semantic
 ```
 
 ### 5. Ingest Legacy Knowledge
@@ -174,10 +174,10 @@ If you have legacy PDFs, markdown files, or unstructured documentation, drop the
 
 ```bash
 # Ingest a specific file
-knowcode ingest-semantic .knowcode/knowledge/raw/legacy-docs.pdf
+know ingest-semantic .knowcode/knowledge/raw/legacy-docs.pdf
 
 # Or ingest and wipe the entire inbox at once
-knowcode ingest-semantic .
+know ingest-semantic .
 ```
 
 ---

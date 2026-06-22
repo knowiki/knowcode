@@ -42,7 +42,7 @@ def test_phase3():
         # Verify Templates
         assert paths.knowcode_file.is_file()
         knowcode_text = paths.knowcode_file.read_text(encoding="utf-8")
-        assert td.resolve().name in knowcode_text, "Project name not templated into BRAIN.md"
+        assert td.resolve().name in knowcode_text, "Project name not templated into KNOWCODE.md"
         assert "Runtime:" in knowcode_text
         assert "Structural Engine:" in knowcode_text
         

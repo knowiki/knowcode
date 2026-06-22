@@ -1,4 +1,4 @@
-name: Publish Knowcode
+name: Publish KnowCode
 
 on:
   release:
@@ -34,17 +34,17 @@ jobs:
             pkg_name: knowcode-win32-x64
             npm_os: win32
             npm_cpu: x64
-            artifact_name: knowcode.exe
+            artifact_name: know.exe
           - os: macos-latest
             pkg_name: knowcode-darwin-arm64
             npm_os: darwin
             npm_cpu: arm64
-            artifact_name: knowcode
+            artifact_name: know
           - os: ubuntu-latest
             pkg_name: knowcode-linux-x64
             npm_os: linux
             npm_cpu: x64
-            artifact_name: knowcode
+            artifact_name: know
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -56,13 +56,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Install CLI and PyInstaller
         run: |
           pip install .
           pip install pyinstaller
       - name: Build executable
-        run: pyinstaller --name knowcode --onefile src/runtime/cli/app.py
+        run: pyinstaller --name know --onefile src/runtime/cli/app.py
       - name: Prepare NPM package
         shell: bash
         run: |
@@ -72,14 +72,14 @@ jobs:
           {
             "name": "${{ matrix.pkg_name }}",
             "version": "0.1.0",
-            "description": "Platform specific binary for Knowcode",
+            "description": "Platform specific binary for KnowCode",
             "os": [
               "${{ matrix.npm_os }}"
             ],
             "cpu": [
               "${{ matrix.npm_cpu }}"
             ],
-            "author": "Knowcode Team",
+            "author": "KnowCode Team",
             "license": "MIT"
           }
           EOF
@@ -99,7 +99,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          registry-url: 'https://registry.npmjs.org'
+          registry-url: "https://registry.npmjs.org"
       - name: Publish Wrapper
         working-directory: npm/knowcode
         env:

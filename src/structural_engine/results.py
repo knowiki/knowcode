@@ -12,7 +12,7 @@ from datetime import datetime
 
 @dataclass(frozen=True)
 class InitializationResult:
-    """Result of a successful Brain initialization."""
+    """Result of a successful KnowCode initialization."""
 
     success: bool
     structural_revision: str

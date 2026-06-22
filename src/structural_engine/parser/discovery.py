@@ -10,7 +10,7 @@ Ignored Directories
 -------------------
 ::
 
-    .git, .brain, node_modules, dist, build, target, venv,
+    .git, .knowcode, node_modules, dist, build, target, venv,
     .venv, __pycache__, .mypy_cache, .pytest_cache, .tox,
     .eggs, .idea, .vscode, .vs
 

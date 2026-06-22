@@ -1,6 +1,6 @@
 """Semantic Sync service.
 
-Handles the Runtime orchestration for the 'brain sync-semantic' command.
+Handles the Runtime orchestration for the 'know sync-semantic' command.
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 """Sync service.
 
-Handles the Runtime orchestration for the 'brain sync' command.
+Handles the Runtime orchestration for the 'know sync' command.
 """
 
 from __future__ import annotations

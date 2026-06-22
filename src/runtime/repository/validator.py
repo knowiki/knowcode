@@ -7,7 +7,7 @@ different requirements than synchronization.
 Checks
 ------
 - Git repository exists (``.git``).
-- Brain artifact initialized (``.knowcode``).
+- KnowCode artifact initialized (``.knowcode``).
 - ``state.yaml`` exists.
 - ``structure/`` folder exists.
 
@@ -48,7 +48,7 @@ def validate_for_init(paths: RepositoryPaths) -> None:
 
     if paths.knowcode_root.is_dir():
         raise KnowcodeAlreadyInitialized(
-            f"Brain artifact already exists: {paths.knowcode_root}"
+            f"KnowCode artifact already exists: {paths.knowcode_root}"
         )
         
     if paths.agent_dir.is_dir():
@@ -81,12 +81,12 @@ def validate_for_sync(paths: RepositoryPaths) -> None:
 
     if not paths.knowcode_root.is_dir():
         raise KnowcodeNotInitialized(
-            f"Brain artifact not found. Run 'knowcode .' first: {paths.repo_root}"
+            f"KnowCode artifact not found. Run 'know .' first: {paths.repo_root}"
         )
         
     if not paths.agent_dir.is_dir():
         raise KnowcodeNotInitialized(
-            f"Agent artifact not found. Run 'knowcode .' first: {paths.repo_root}"
+            f"Agent artifact not found. Run 'know .' first: {paths.repo_root}"
         )
 
     if not paths.state_file.is_file():

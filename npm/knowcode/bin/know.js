@@ -21,7 +21,7 @@ if (!targetPackageName) {
 }
 
 try {
-  const binaryName = platform === 'win32' ? 'knowcode.exe' : 'knowcode';
+  const binaryName = platform === 'win32' ? 'know.exe' : 'know';
   const binaryPath = require.resolve(`${targetPackageName}/bin/${binaryName}`);
 
   // Set the environment variable to identify npm install method
@@ -34,7 +34,7 @@ try {
 
   process.exit(result.status ?? 0);
 } catch (err) {
-  console.error(`Error: Failed to execute Knowcode CLI binary.
+  console.error(`Error: Failed to execute KnowCode CLI binary.
 Details: ${err.message}
 Please ensure that the platform-specific dependency '${targetPackageName}' is installed correctly.`);
   process.exit(1);

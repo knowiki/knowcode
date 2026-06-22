@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class StructuralState(BaseModel):
@@ -31,6 +31,4 @@ class StructuralState(BaseModel):
     last_sync: datetime = Field(default_factory=datetime.utcnow)
     """Timestamp of the last structural synchronization."""
 
-    class Config:
-        """Pydantic config."""
-        frozen = True
+    model_config = ConfigDict(frozen=True)

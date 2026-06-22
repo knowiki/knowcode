@@ -35,7 +35,7 @@ class StructuralEngine:
         """Initialize the structural state of the repository.
 
         Must only be called after the Runtime has scaffolded the
-        .brain directory via ArtifactBuilder.
+        .knowcode directory via ArtifactBuilder.
 
         Parameters
         ----------

@@ -1,6 +1,6 @@
 """Artifact Builder.
 
-Scaffolds the initial ``.brain/`` directory structure and renders
+Scaffolds the initial ``.knowcode/`` directory structure and renders
 static, human-facing knowledge templates.
 
 Invariants
@@ -24,7 +24,7 @@ logger = structlog.get_logger(__name__)
 
 
 class ArtifactBuilder:
-    """Scaffolds the Brain artifact directory structure."""
+    """Scaffolds the KnowCode artifact directory structure."""
 
     def __init__(self, paths: RepositoryPaths) -> None:
         """Initialize the builder.

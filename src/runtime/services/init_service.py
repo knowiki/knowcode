@@ -1,6 +1,6 @@
 """Init service.
 
-Handles the Runtime orchestration for the 'brain .' command.
+Handles the Runtime orchestration for the 'know .' command.
 """
 
 from __future__ import annotations

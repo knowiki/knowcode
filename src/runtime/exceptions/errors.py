@@ -30,8 +30,8 @@ from __future__ import annotations
 
 
 class KnowcodeError(Exception):
-    """Base exception for all domain-level Knowcode errors.
-    
+    """Base exception for all domain-level KnowCode errors.
+
     Caught by the CLI layer to present a clean, un-traced error message.
     """
 
@@ -46,13 +46,13 @@ class NotGitRepository(RepositoryError):
 
 class RepositoryNotFound(RepositoryError):
     """Raised when no `.git` directory can be found by walking upward.
-    
-    This indicates Knowcode was invoked outside a valid git repository.
+
+    This indicates KnowCode was invoked outside a valid git repository.
     """
 
 
 class ArtifactError(KnowcodeError):
-    """Base exception for Knowcode artifact filesystem failures."""
+    """Base exception for KnowCode artifact filesystem failures."""
 
 
 class KnowcodeAlreadyInitialized(ArtifactError):
