@@ -81,7 +81,9 @@ Run the initialization command in your target repository terminal:
 ```bash
 know .
 ```
-This scaffolds the `.agent/` and `.knowcode/` directories, computes your first AST snapshot, and drops `knowcode.md` at your root.
+This scaffolds the `.agent/` and `.knowcode/` directories, computes your first AST snapshot, and drops `knowcode.md` at your root. 
+
+*Note: To prevent polluting your repository, `know .` automatically adds `.knowcode/`, `.agent/`, and `knowcode.md` to your `.gitignore`. If you want to share your synthesized semantic knowledge with your team, you can selectively un-ignore `.knowcode/knowledge/`.*
 
 ### 2. Activate the Agent
 In your AI chat (Cursor, Copilot, Gemini), simply type:
