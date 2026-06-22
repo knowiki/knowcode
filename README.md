@@ -45,11 +45,26 @@ KnowCode partitions codebase understanding into three clean domains:
 - [Python 3.13+](https://www.python.org/)
 - [uv Package Manager](https://github.com/astral-sh/uv)
 
-### Setup
-Clone the repository and install it in editable mode:
+### Installation
+
+You can install Knowcode directly via pip or npm.
+
+**Using pip:**
+```bash
+pip install knowcode
+```
+
+**Using npm:**
+```bash
+npm install -g knowcode
+```
+
+#### Development Setup
+
+If you want to contribute or modify the code, clone the repository and install it in editable mode:
 
 ```bash
-git clone https://github.com/your-username/knowcode.git
+git clone https://github.com/knowiki/knowcode.git
 cd knowcode
 uv sync
 uv pip install -e .
