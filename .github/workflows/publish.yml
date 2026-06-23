@@ -62,7 +62,7 @@ jobs:
           pip install .
           pip install pyinstaller
       - name: Build executable
-        run: pyinstaller --name know --onefile src/runtime/cli/app.py
+        run: pyinstaller know.spec
       - name: Prepare NPM package
         shell: bash
         run: |
@@ -71,7 +71,7 @@ jobs:
           cat <<EOF > npm-binary-pkg/package.json
           {
             "name": "${{ matrix.pkg_name }}",
-            "version": "0.1.5",
+            "version": "0.1.6",
             "description": "Platform specific binary for KnowCode",
             "os": [
               "${{ matrix.npm_os }}"

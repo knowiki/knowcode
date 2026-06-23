@@ -88,7 +88,7 @@ class ArtifactBuilder:
         project_name = self.paths.repo_root.name
         
         struct_content = struct_template.render(project_name=project_name)
-        struct_file = self.paths.knowcode_root / "README_STRUCTURE.md"
+        struct_file = self.paths.knowcode_file
         struct_file.write_text(struct_content, encoding="utf-8")
         logger.debug("artifact_builder.render", file=str(struct_file))
 

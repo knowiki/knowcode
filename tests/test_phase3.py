@@ -42,11 +42,11 @@ def test_phase3():
         # Verify Templates
         assert paths.knowcode_file.is_file()
         knowcode_text = paths.knowcode_file.read_text(encoding="utf-8")
-        assert td.resolve().name in knowcode_text, "Project name not templated into KNOWCODE.md"
+        assert td.resolve().name in knowcode_text, "Project name not templated into README_STRUCTURE.md"
         assert "Runtime:" in knowcode_text
         assert "Structural Engine:" in knowcode_text
         
-        km_file = paths.knowledge_dir / "knowledge-maintenance.md"
+        km_file = paths.knowledge_dir / "README_KNOWLEDGE.md"
         assert km_file.is_file()
         km_text = km_file.read_text(encoding="utf-8")
         assert "Knowledge Maintenance Protocol" in km_text

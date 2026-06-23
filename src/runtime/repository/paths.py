@@ -32,7 +32,7 @@ def build_paths(repo: Repository) -> RepositoryPaths:
         repo_root=repo.root,
         git_dir=repo.git_dir,
         knowcode_root=knowcode,
-        knowcode_file=knowcode / "KNOWCODE.md",
+        knowcode_file=knowcode / "README_STRUCTURE.md",
         state_file=knowcode / "state.yaml",
         structure_dir=knowcode / "structure",
         snapshots_dir=knowcode / "structure" / "snapshots",
