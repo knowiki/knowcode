@@ -76,7 +76,13 @@ def validate_access_key(key: str) -> bool:
         url = f"{API_BASE_URL}/api/auth/validate"
         data = json.dumps({"key": key.strip()}).encode("utf-8")
         req = urllib.request.Request(
-            url, data=data, headers={"Content-Type": "application/json"}, method="POST"
+            url,
+            data=data,
+            headers={
+                "Content-Type": "application/json",
+                "User-Agent": "knowcode-cli-auth",
+            },
+            method="POST",
         )
         with urllib.request.urlopen(req, timeout=2.0) as response:
             res_data = json.loads(response.read().decode("utf-8"))
