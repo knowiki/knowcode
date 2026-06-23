@@ -7,9 +7,9 @@ const platform = os.platform(); // 'win32', 'darwin', 'linux'
 const arch = os.arch();         // 'x64', 'arm64'
 
 const packageMap = {
-  'win32-x64': 'knowcode-win32-x64',
-  'darwin-arm64': 'knowcode-darwin-arm64',
-  'linux-x64': 'knowcode-linux-x64'
+  'win32-x64': '@knowiki/knowcode-win32-x64',
+  'darwin-arm64': '@knowiki/knowcode-darwin-arm64',
+  'linux-x64': '@knowiki/knowcode-linux-x64'
 };
 
 const key = `${platform}-${arch}`;

@@ -57,7 +57,7 @@ try:
     from importlib.metadata import version as get_version
     VERSION = f"v{get_version('knowcode')}"
 except Exception:
-    VERSION = "v0.1.4"
+    VERSION = "v0.1.5"
 
 
 def move_up(n: int) -> None:
