@@ -11,7 +11,7 @@ from pathlib import Path
 from runtime.cli.auth import get_access_key
 
 # Default local API URL, overrideable via env var
-API_BASE_URL = os.environ.get("KNOWCODE_API_URL", "https://api.knowcode.in")
+API_BASE_URL = os.environ.get("KNOWIKI_API_URL", "https://api.knowiki.in")
 TELEMETRY_ENDPOINT = f"{API_BASE_URL}/api/telemetry"
 
 
