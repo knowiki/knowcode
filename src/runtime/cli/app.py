@@ -347,5 +347,17 @@ def auth_command() -> None:
         console.print(f"[bold red]Error:[/bold red] {e}")
 
 
+@app.command("telemetry-worker", hidden=True)
+def telemetry_worker(
+    command: str, status: str, project_id: str, access_key: str
+) -> None:
+    """Hidden command to execute telemetry sending in a background process."""
+    from runtime.cli.telemetry import _send_telemetry_sync
+    try:
+        _send_telemetry_sync(command, status, project_id, access_key)
+    except Exception:
+        pass
+
+
 if __name__ == "__main__":
     app()

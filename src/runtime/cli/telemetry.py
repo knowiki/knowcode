@@ -73,8 +73,22 @@ def send_telemetry_async(command: str, status: str) -> None:
         # when running under terminal emulators like Git Bash (Mintty).
         creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
+        if getattr(sys, "frozen", False):
+            # Standalone binary runner: invoke the built-in hidden command
+            args = [
+                sys.executable,
+                "telemetry-worker",
+                command,
+                status,
+                project_id,
+                access_key,
+            ]
+        else:
+            # Standard Python environment: execute python on telemetry.py script
+            args = [sys.executable, __file__, command, status, project_id, access_key]
+
         subprocess.Popen(
-            [sys.executable, __file__, command, status, project_id, access_key],
+            args,
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL,
             stdin=subprocess.DEVNULL,
