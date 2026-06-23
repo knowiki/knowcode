@@ -52,7 +52,12 @@ LEFT_BLOCK_WIDTH = LOGO_WIDTH + 6
 LXN = LOGO_WIDTH - 1
 LYN = LOGO_HEIGHT - 1
 TAGLINE = "KnowCode"
-VERSION = "v0.1.0"
+
+try:
+    from importlib.metadata import version as get_version
+    VERSION = f"v{get_version('knowcode')}"
+except Exception:
+    VERSION = "v0.1.2"
 
 
 def move_up(n: int) -> None:

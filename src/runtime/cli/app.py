@@ -18,7 +18,7 @@ from runtime.exceptions.errors import KnowcodeError
 from runtime.services.init_service import run_init
 from runtime.services.status_service import run_status
 from runtime.services.sync_service import run_sync
-from runtime.cli.animation import BackgroundAnimator
+from runtime.cli.animation import BackgroundAnimator, VERSION
 from runtime.cli.auth import ensure_authenticated
 from runtime.cli.telemetry import send_telemetry_async
 import shutil
@@ -29,6 +29,27 @@ app = typer.Typer(
     add_completion=False,
     no_args_is_help=True,
 )
+
+
+def version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"KnowCode {VERSION}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main_callback(
+    version: bool | None = typer.Option(
+        None,
+        "--version",
+        "-v",
+        help="Show version and exit.",
+        callback=version_callback,
+        is_eager=True,
+    ),
+) -> None:
+    pass
+
 
 console = Console()
 animator = BackgroundAnimator()
