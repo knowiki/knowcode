@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['src\\runtime\\cli\\app.py'],
+    ['src/runtime/cli/app.py'],
     pathex=[],
     binaries=[],
     datas=[('src/runtime/templates', 'runtime/templates')],
