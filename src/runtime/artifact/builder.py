@@ -52,7 +52,6 @@ class ArtifactBuilder:
 
         self._create_directories()
         self._render_templates()
-        self._update_gitignore()
 
         logger.info("artifact_builder.complete")
 
@@ -155,25 +154,3 @@ class ArtifactBuilder:
             file_path = self.paths.workflows_dir / file_name
             file_path.write_text(template.render(), encoding="utf-8")
             logger.debug("artifact_builder.render", file=str(file_path))
-
-    def _update_gitignore(self) -> None:
-        """Add knowcode directories to .gitignore if not present."""
-        gitignore_path = self.paths.repo_root / ".gitignore"
-        entries_to_add = [".knowcode/", ".agent/", "knowcode.md"]
-        
-        if not gitignore_path.exists():
-            content = "# Knowcode AI Governance\n" + "\n".join(entries_to_add) + "\n"
-            gitignore_path.write_text(content, encoding="utf-8")
-            logger.debug("artifact_builder.gitignore_created", path=str(gitignore_path))
-            return
-
-        content = gitignore_path.read_text(encoding="utf-8")
-        lines = set(line.strip() for line in content.splitlines())
-        
-        missing = [entry for entry in entries_to_add if entry not in lines]
-        if missing:
-            with gitignore_path.open("a", encoding="utf-8") as f:
-                f.write("\n\n# Knowcode AI Governance\n")
-                for entry in missing:
-                    f.write(f"{entry}\n")
-            logger.debug("artifact_builder.gitignore_updated", appended=missing)
