@@ -38,7 +38,7 @@ def _capture_console_lines(renderable) -> list[str]:
     """Capture rich console output and split it into clean string lines constrained to right column."""
     if sys.stdout.isatty():
         cols, lines = shutil.get_terminal_size()
-        if cols >= 80 and lines >= 14:
+        if cols >= 50 and lines >= 11:
             right_width = max(20, cols - 35 - 4)
         else:
             right_width = max(20, cols - 4)
@@ -53,9 +53,29 @@ def _capture_console_lines(renderable) -> list[str]:
     return capture.get().rstrip().split("\n")
 
 
+# Maps raw structlog event names to user-friendly status messages
+_STATUS_LABELS: dict[str, str] = {
+    "artifact_builder.started": "Scaffolding directories...",
+    "artifact_builder.mkdir": "Creating folders...",
+    "artifact_builder.render": "Rendering templates...",
+    "artifact_builder.complete": "Scaffold complete.",
+    "engine.initialize.started": "Starting structural engine...",
+    "parser.started": "Discovering files...",
+    "parser.discovery_complete": "Parsing repository...",
+    "parser.complete": "Building snapshot...",
+    "state_manager.initialized": "Saving state...",
+    "engine.initialize.complete": "Finalizing...",
+    "engine.sync.started": "Starting sync...",
+    "engine.sync.no_changes": "No changes detected.",
+    "engine.sync.complete": "Sync complete.",
+    "state_manager.loaded": "Loading state...",
+}
+
+
 def _update_animator(logger, method_name, event_dict):
     if animator and animator.running:
-        animator.status = str(event_dict.get("event", "Processing..."))
+        raw_event = str(event_dict.get("event", "Processing..."))
+        animator.status = _STATUS_LABELS.get(raw_event, raw_event)
     return event_dict
 
 
@@ -63,6 +83,7 @@ def _setup_logging() -> None:
     """Configure minimal JSON logging for the entire ecosystem."""
     structlog.configure(
         processors=[
+            _update_animator,
             structlog.processors.TimeStamper(fmt="iso"),
             structlog.processors.JSONRenderer(),
         ],
