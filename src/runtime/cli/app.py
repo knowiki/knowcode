@@ -59,7 +59,7 @@ def _capture_console_lines(renderable) -> list[str]:
     """Capture rich console output and split it into clean string lines constrained to right column."""
     if sys.stdout.isatty():
         cols, lines = shutil.get_terminal_size()
-        if cols >= 50 and lines >= 11:
+        if cols >= 70 and lines >= 15:
             right_width = max(20, cols - 35 - 4)
         else:
             right_width = max(20, cols - 4)

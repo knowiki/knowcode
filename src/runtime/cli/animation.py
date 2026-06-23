@@ -57,7 +57,7 @@ try:
     from importlib.metadata import version as get_version
     VERSION = f"v{get_version('knowcode')}"
 except Exception:
-    VERSION = "v0.1.3"
+    VERSION = "v0.1.4"
 
 
 def move_up(n: int) -> None:
@@ -111,7 +111,7 @@ class BackgroundAnimator:
         cols, lines = shutil.get_terminal_size()
 
         # Reserve screen lines initially depending on terminal size
-        if lines < LOGO_HEIGHT or cols < 50:
+        if lines < 15 or cols < 70:
             self.last_height = 0
         else:
             write("\n" * (LOGO_HEIGHT + 1))
@@ -165,7 +165,7 @@ class BackgroundAnimator:
                     cols, lines = shutil.get_terminal_size()
 
                 # Determine display mode based on terminal size
-                if lines < LOGO_HEIGHT or cols < 50:
+                if lines < 15 or cols < 70:
                     mode = "single"
                     current_height = 0
                 else:
@@ -246,7 +246,7 @@ class BackgroundAnimator:
     def _print_final(self, results: list[str] | None = None) -> None:
         cols, lines = shutil.get_terminal_size()
 
-        if lines < LOGO_HEIGHT or cols < 50:
+        if lines < 15 or cols < 70:
             max_width = max(10, cols - 6)
             status_text = self.status
             if len(status_text) > max_width:
