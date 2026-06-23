@@ -68,10 +68,12 @@ def send_telemetry_async(command: str, status: str) -> None:
             project_id = "unknown"
 
         # Dispatch the network request in a separate process so the CLI exits instantly.
-        # We only use CREATE_NO_WINDOW on Windows to prevent console window popups.
-        # We avoid DETACHED_PROCESS because it forces a new console window to open
-        # when running under terminal emulators like Git Bash (Mintty).
+        # We use CREATE_NO_WINDOW | DETACHED_PROCESS on Windows to ensure it runs completely independent
+        # of the parent process and keeps running after the parent exits, without showing console windows.
         creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        if sys.platform == "win32":
+            creation_flags |= 0x00000008  # DETACHED_PROCESS
+            creation_flags |= 0x01000000  # CREATE_BREAKAWAY_FROM_JOB
 
         if getattr(sys, "frozen", False):
             # Standalone binary runner: invoke the built-in hidden command
@@ -87,14 +89,47 @@ def send_telemetry_async(command: str, status: str) -> None:
             # Standard Python environment: execute python on telemetry.py script
             args = [sys.executable, __file__, command, status, project_id, access_key]
 
-        subprocess.Popen(
-            args,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            stdin=subprocess.DEVNULL,
-            creationflags=creation_flags,
-            close_fds=True,
-        )
+
+
+        child_env = os.environ.copy()
+        # Remove PyInstaller specific environment variables from the child process.
+        # This prevents the child from conflicting with the parent's temporary folder
+        # environment and forces it to initialize its own execution context cleanly.
+        for key in list(child_env.keys()):
+            if key.startswith("_PYI_"):
+                child_env.pop(key, None)
+
+        try:
+            subprocess.Popen(
+                args,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                stdin=subprocess.DEVNULL,
+                creationflags=creation_flags,
+                close_fds=False,
+                env=child_env,
+            )
+        except Exception as e:
+            # If CREATE_BREAKAWAY_FROM_JOB failed (e.g. WinError 5 Access is denied due to environment constraints),
+            # fall back to spawning without it.
+            if sys.platform == "win32" and (creation_flags & 0x01000000):
+                creation_flags &= ~0x01000000
+                subprocess.Popen(
+                    args,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    stdin=subprocess.DEVNULL,
+                    creationflags=creation_flags,
+                    close_fds=False,
+                    env=child_env,
+                )
+            else:
+                raise e
+        
+        # Give the operating system a brief moment (200ms) to initialize the child process
+        # before the parent exits, preventing premature termination.
+        import time
+        time.sleep(0.2)
     except Exception:
         pass
 
