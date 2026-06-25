@@ -71,7 +71,7 @@ jobs:
           cat <<EOF > npm-binary-pkg/package.json
           {
             "name": "${{ matrix.pkg_name }}",
-            "version": "0.1.8",
+            "version": "0.1.9",
             "description": "Platform specific binary for KnowCode",
             "os": [
               "${{ matrix.npm_os }}"
