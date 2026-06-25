@@ -68,12 +68,16 @@ def send_telemetry_async(command: str, status: str) -> None:
             project_id = "unknown"
 
         # Dispatch the network request in a separate process so the CLI exits instantly.
-        # We use CREATE_NO_WINDOW | DETACHED_PROCESS on Windows to ensure it runs completely independent
+        # We use CREATE_NO_WINDOW on Windows to ensure it runs completely independent
         # of the parent process and keeps running after the parent exits, without showing console windows.
+        # (Note: Windows ignores CREATE_NO_WINDOW if combined with DETACHED_PROCESS, causing window flashes)
         creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        startupinfo = None
         if sys.platform == "win32":
-            creation_flags |= 0x00000008  # DETACHED_PROCESS
             creation_flags |= 0x01000000  # CREATE_BREAKAWAY_FROM_JOB
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = getattr(subprocess, "SW_HIDE", 0)
 
         if getattr(sys, "frozen", False):
             # Standalone binary runner: invoke the built-in hidden command
@@ -108,6 +112,7 @@ def send_telemetry_async(command: str, status: str) -> None:
                 creationflags=creation_flags,
                 close_fds=False,
                 env=child_env,
+                startupinfo=startupinfo,
             )
         except Exception as e:
             # If CREATE_BREAKAWAY_FROM_JOB failed (e.g. WinError 5 Access is denied due to environment constraints),
@@ -122,6 +127,7 @@ def send_telemetry_async(command: str, status: str) -> None:
                     creationflags=creation_flags,
                     close_fds=False,
                     env=child_env,
+                    startupinfo=startupinfo,
                 )
             else:
                 raise e
