@@ -1,0 +1,67 @@
+name: Build Standalone Executables
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Release tag to upload binaries to (e.g., v0.1.9). If empty, files are only uploaded as workflow run artifacts.'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build-executables:
+    name: Build Standalone Executables
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_name: know.exe
+            release_name: knowcode-windows-x64.exe
+          - os: macos-latest
+            artifact_name: know
+            release_name: knowcode-macos-arm64
+          - os: ubuntu-latest
+            artifact_name: know
+            release_name: knowcode-linux-x64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install CLI and PyInstaller
+        run: |
+          pip install .
+          pip install pyinstaller
+
+      - name: Build executable
+        run: pyinstaller know.spec
+
+      - name: Rename executable for release
+        shell: bash
+        run: |
+          mv dist/${{ matrix.artifact_name }} dist/${{ matrix.release_name }}
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.release_name }}
+          path: dist/${{ matrix.release_name }}
+          if-no-files-found: error
+
+      - name: Upload to GitHub Release
+        if: (github.event_name == 'release') || (github.event_name == 'workflow_dispatch' && inputs.tag_name != '') || startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
+          files: dist/${{ matrix.release_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

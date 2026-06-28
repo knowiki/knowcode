@@ -310,6 +310,7 @@ def ingest_semantic_command(
 
         if result.semantic_revision == "No change":
             console.print(f"[yellow]ℹ {result.message}[/yellow]")
+            send_telemetry_async("ingest-semantic", "success")
             return
 
         table = Table(title="Ingest Results", show_header=False)
@@ -331,9 +332,11 @@ def ingest_semantic_command(
                 border_style="magenta",
             )
         )
+        send_telemetry_async("ingest-semantic", "success")
 
     except Exception as e:
         animator.stop(final_status="Semantic ingest failed.")
+        send_telemetry_async("ingest-semantic", "failed")
         _handle_error(e)
 
 

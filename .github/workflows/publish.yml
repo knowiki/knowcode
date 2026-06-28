@@ -105,3 +105,50 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: npm publish --access public
+
+  build-standalone-executables:
+    name: Build Standalone Executables
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact_name: know.exe
+            release_name: knowcode-windows-x64.exe
+          - os: macos-latest
+            artifact_name: know
+            release_name: knowcode-macos-arm64
+          - os: ubuntu-latest
+            artifact_name: know
+            release_name: knowcode-linux-x64
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install CLI and PyInstaller
+        run: |
+          pip install .
+          pip install pyinstaller
+      - name: Build executable
+        run: pyinstaller know.spec
+      - name: Rename executable for release
+        shell: bash
+        run: |
+          mv dist/${{ matrix.artifact_name }} dist/${{ matrix.release_name }}
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.release_name }}
+          path: dist/${{ matrix.release_name }}
+          if-no-files-found: error
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/${{ matrix.release_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

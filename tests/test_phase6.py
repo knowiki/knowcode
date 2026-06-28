@@ -66,6 +66,24 @@ def test_phase6():
         assert result.exit_code == 0
         assert "S-002" in result.stdout
         print("[OK] knowcode status (Post-sync verification)")
+
+        # 7. Test ingest-semantic (empty inbox)
+        result = runner.invoke(app, ["ingest-semantic", "."])
+        assert result.exit_code == 0
+        assert "Inbox is already empty." in result.stdout
+        print("[OK] knowcode ingest-semantic (No files to ingest)")
+
+        # 8. Test ingest-semantic (one file)
+        raw_dir = Path(".knowcode/knowledge/raw")
+        raw_dir.mkdir(parents=True, exist_ok=True)
+        temp_raw_file = raw_dir / "legacy_doc.md"
+        temp_raw_file.write_text("Legacy doc content", encoding="utf-8")
+
+        result = runner.invoke(app, ["ingest-semantic", "."])
+        assert result.exit_code == 0
+        assert "Ingested 1 file(s)." in result.stdout
+        assert not temp_raw_file.exists()
+        print("[OK] knowcode ingest-semantic (Successfully ingested 1 file)")
         
     finally:
         os.chdir(old_cwd)
