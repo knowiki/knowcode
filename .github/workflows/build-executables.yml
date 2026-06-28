@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release tag to upload installers to (e.g., v0.1.9). If empty, files are only uploaded as workflow run artifacts.'
+        description: 'Release tag to upload installers/binaries to (e.g., v0.1.9). If empty, files are only uploaded as workflow run artifacts.'
         required: false
         type: string
 
@@ -21,13 +21,16 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: know.exe
-            release_name: knowcode-windows-installer.exe
+            binary_release_name: knowcode-windows-x64.exe
+            installer_release_name: knowcode-windows-installer.exe
           - os: macos-latest
             artifact_name: know
-            release_name: knowcode-macos-installer.pkg
+            binary_release_name: knowcode-macos-arm64
+            installer_release_name: knowcode-macos-installer.pkg
           - os: ubuntu-latest
             artifact_name: know
-            release_name: knowcode-linux-installer.deb
+            binary_release_name: knowcode-linux-x64
+            installer_release_name: knowcode-linux-installer.deb
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +47,11 @@ jobs:
 
       - name: Build executable
         run: pyinstaller know.spec
+
+      - name: Copy standalone binary for release
+        shell: bash
+        run: |
+          cp dist/${{ matrix.artifact_name }} dist/${{ matrix.binary_release_name }}
 
       - name: Build Windows Installer
         if: matrix.os == 'windows-latest'
@@ -75,11 +83,13 @@ jobs:
           EOF
           dpkg-deb --build deb-root dist/knowcode-linux-installer.deb
 
-      - name: Upload Artifact
+      - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.release_name }}
-          path: dist/${{ matrix.release_name }}
+          name: knowcode-${{ matrix.os }}
+          path: |
+            dist/${{ matrix.binary_release_name }}
+            dist/${{ matrix.installer_release_name }}
           if-no-files-found: error
 
       - name: Upload to GitHub Release
@@ -87,6 +97,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.tag_name || github.ref_name }}
-          files: dist/${{ matrix.release_name }}
+          files: |
+            dist/${{ matrix.binary_release_name }}
+            dist/${{ matrix.installer_release_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
