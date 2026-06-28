@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release tag to upload installers/binaries to (e.g., v0.1.9). If empty, files are only uploaded as workflow run artifacts.'
+        description: 'Release tag to upload installers/binaries to (e.g., v0.1.10). If empty, files are only uploaded as workflow run artifacts.'
         required: false
         type: string
 
@@ -63,7 +63,7 @@ jobs:
           mkdir -p pkg-root/usr/local/bin
           cp dist/know pkg-root/usr/local/bin/know
           pkgbuild --identifier in.knowiki.knowcode \
-                   --version 0.1.9 \
+                   --version 0.1.10 \
                    --root pkg-root \
                    dist/knowcode-macos-installer.pkg
 
@@ -74,7 +74,7 @@ jobs:
           cp dist/know deb-root/usr/local/bin/know
           cat <<EOF > deb-root/DEBIAN/control
           Package: knowcode
-          Version: 0.1.9
+          Version: 0.1.10
           Section: utils
           Priority: optional
           Architecture: amd64

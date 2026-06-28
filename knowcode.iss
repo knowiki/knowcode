@@ -1,6 +1,6 @@
 [Setup]
 AppName=KnowCode
-AppVersion=0.1.9
+AppVersion=0.1.10
 DefaultDirName={localappdata}\KnowCode
 DefaultGroupName=KnowCode
 UninstallDisplayIcon={app}\know.exe

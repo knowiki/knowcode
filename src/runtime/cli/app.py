@@ -22,6 +22,9 @@ from runtime.cli.animation import BackgroundAnimator, VERSION
 from runtime.cli.auth import ensure_authenticated
 from runtime.cli.telemetry import send_telemetry_async
 import shutil
+import urllib.request
+import json
+import platform
 
 app = typer.Typer(
     name="knowcode",
@@ -360,6 +363,131 @@ def telemetry_worker(
         _send_telemetry_sync(command, status, project_id, access_key)
     except Exception:
         pass
+
+
+def get_latest_version() -> tuple[str | None, list[dict]]:
+    url = "https://api.github.com/repos/knowiki/knowcode/releases/latest"
+    try:
+        req = urllib.request.Request(
+            url, 
+            headers={"User-Agent": "KnowCode-CLI-Updater"}
+        )
+        with urllib.request.urlopen(req, timeout=5) as response:
+            data = json.loads(response.read().decode())
+            return data.get("tag_name"), data.get("assets", [])
+    except Exception:
+        return None, []
+
+
+def parse_ver(version_str: str) -> tuple[int, ...]:
+    clean = version_str.strip().lstrip('v')
+    try:
+        return tuple(int(x) for x in clean.split('.'))
+    except ValueError:
+        return (0,)
+
+
+@app.command("update")
+def update_command() -> None:
+    """Check for updates and upgrade the KnowCode CLI to the latest version."""
+    console.print("[yellow]Checking for updates...[/yellow]")
+    
+    current_version_str = VERSION
+    latest_tag, assets = get_latest_version()
+    
+    if not latest_tag:
+        console.print("[red]Error: Could not retrieve latest version from GitHub Releases.[/red]")
+        raise typer.Exit(code=1)
+        
+    current_v = parse_ver(current_version_str)
+    latest_v = parse_ver(latest_tag)
+    
+    if latest_v <= current_v:
+        console.print(f"[green]✓ You are already on the latest version of KnowCode (v{current_version_str}).[/green]")
+        return
+        
+    console.print(f"[cyan]A new version of KnowCode is available: v{current_version_str} → {latest_tag}[/cyan]")
+    
+    is_frozen = getattr(sys, "frozen", False)
+    if not is_frozen:
+        console.print(
+            "\n[yellow]Note: You are running a non-standalone (pip/npm) version of KnowCode.[/yellow]\n"
+            "Please upgrade using your package manager:\n"
+            "  • [cyan]uv tool upgrade knowcode[/cyan] (if installed via uv)\n"
+            "  • [cyan]pip install --upgrade knowcode[/cyan] (if installed via pip)\n"
+            "  • [cyan]npm update -g knowcode[/cyan] (if installed via npm)"
+        )
+        return
+        
+    current_exe_path = Path(sys.executable)
+    system = platform.system().lower()
+    
+    target_asset = None
+    if system == "windows":
+        target_asset = "knowcode-windows-x64.exe"
+    elif system == "darwin":
+        target_asset = "knowcode-macos-arm64"
+    elif system == "linux":
+        target_asset = "knowcode-linux-x64"
+        
+    download_url = None
+    for asset in assets:
+        if asset.get("name") == target_asset:
+            download_url = asset.get("browser_download_url")
+            break
+            
+    if not download_url:
+        console.print(
+            f"[red]Error: Could not find standalone binary asset '{target_asset}' in the latest release.[/red]\n"
+            f"Please download the installer from [cyan]https://knowiki.in/docs[/cyan]."
+        )
+        raise typer.Exit(code=1)
+        
+    console.print(f"Downloading update from {download_url}...")
+    temp_file = current_exe_path.with_suffix(current_exe_path.suffix + ".tmp")
+    
+    try:
+        req = urllib.request.Request(
+            download_url,
+            headers={"User-Agent": "KnowCode-CLI-Updater"}
+        )
+        with urllib.request.urlopen(req) as response, open(temp_file, "wb") as out_file:
+            shutil.copyfileobj(response, out_file)
+    except Exception as e:
+        console.print(f"[red]Error downloading update: {e}[/red]")
+        if temp_file.exists():
+            temp_file.unlink()
+        raise typer.Exit(code=1)
+        
+    console.print("Installing update...")
+    try:
+        if system == "windows":
+            old_file = current_exe_path.with_suffix(current_exe_path.suffix + ".old")
+            if old_file.exists():
+                old_file.unlink(missing_ok=True)
+            current_exe_path.rename(old_file)
+            temp_file.rename(current_exe_path)
+            try:
+                old_file.unlink()
+            except Exception:
+                pass
+        else:
+            temp_file.rename(current_exe_path)
+            current_exe_path.chmod(0o755)
+            
+        console.print(f"[green]✓ Successfully upgraded to KnowCode {latest_tag}![/green]")
+    except PermissionError:
+        console.print(
+            "[red]Error: Permission denied. Could not overwrite the executable.[/red]\n"
+            "Please run this update with elevated privileges:\n"
+            f"  [cyan]sudo know update[/cyan]"
+        )
+        if temp_file.exists():
+            temp_file.unlink()
+    except Exception as e:
+        console.print(f"[red]Error installing update: {e}[/red]")
+        if temp_file.exists():
+            temp_file.unlink()
 
 
 if __name__ == "__main__":
