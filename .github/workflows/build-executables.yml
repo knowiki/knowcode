@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: 'Release tag to upload binaries to (e.g., v0.1.9). If empty, files are only uploaded as workflow run artifacts.'
+        description: 'Release tag to upload installers to (e.g., v0.1.9). If empty, files are only uploaded as workflow run artifacts.'
         required: false
         type: string
 
@@ -21,13 +21,13 @@ jobs:
         include:
           - os: windows-latest
             artifact_name: know.exe
-            release_name: knowcode-windows-x64.exe
+            release_name: knowcode-windows-installer.exe
           - os: macos-latest
             artifact_name: know
-            release_name: knowcode-macos-arm64
+            release_name: knowcode-macos-installer.pkg
           - os: ubuntu-latest
             artifact_name: know
-            release_name: knowcode-linux-x64
+            release_name: knowcode-linux-installer.deb
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -45,10 +45,35 @@ jobs:
       - name: Build executable
         run: pyinstaller know.spec
 
-      - name: Rename executable for release
-        shell: bash
+      - name: Build Windows Installer
+        if: matrix.os == 'windows-latest'
+        run: iscc knowcode.iss
+
+      - name: Build macOS Installer
+        if: matrix.os == 'macos-latest'
         run: |
-          mv dist/${{ matrix.artifact_name }} dist/${{ matrix.release_name }}
+          mkdir -p pkg-root/usr/local/bin
+          cp dist/know pkg-root/usr/local/bin/know
+          pkgbuild --identifier in.knowiki.knowcode \
+                   --version 0.1.9 \
+                   --root pkg-root \
+                   dist/knowcode-macos-installer.pkg
+
+      - name: Build Linux Installer
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          mkdir -p deb-root/usr/local/bin deb-root/DEBIAN
+          cp dist/know deb-root/usr/local/bin/know
+          cat <<EOF > deb-root/DEBIAN/control
+          Package: knowcode
+          Version: 0.1.9
+          Section: utils
+          Priority: optional
+          Architecture: amd64
+          Maintainer: KnowCode Team <info@knowiki.in>
+          Description: Structural cognition engine for code repositories
+          EOF
+          dpkg-deb --build deb-root dist/knowcode-linux-installer.deb
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
